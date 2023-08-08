@@ -1,13 +1,13 @@
 import express from "express";
 import db from "../db/conn.mjs";
 import { ObjectId } from "mongodb";
-import GetSub from "./getSub";
+import getSub from "./getSub";
 
 const router = express.Router();
 
 
 
-GetSub()
+getSub()
 
 
 

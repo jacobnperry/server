@@ -1,7 +1,7 @@
 const client = require('drip-nodejs')({ token: '0672dc522d3b6827e4065c2866b59022', accountId: 9967522 });
 const options = { status: "active"};
 
-export default function GetSub(){
+export default function getSub(){
 
 
     client.listSubscribers(options)
