@@ -4,6 +4,24 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
+const client = require('drip-nodejs')({ token: '0672dc522d3b6827e4065c2866b59022', accountId: 9967522 });
+const options = { status: "active"};
+
+client.listSubscribers(options)
+  .then((response) => {
+    console.log(response)
+    // Handle `response.body`
+  })
+  .catch((error) => {
+    // Handle errors
+  });
+
+
+
+
+
+
+
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
   let collection = await db.collection("records");
