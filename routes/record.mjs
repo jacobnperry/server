@@ -19,6 +19,24 @@ router.get("/", async (req, res) => {
   res.send(results).status(200);
 });
 
+router.get("/subscribers", async (req, res) => {
+
+   
+  let response = await axios.request(config)
+  .then((response) => {
+      result = (JSON.stringify(response.data))
+      console.log("Successful GET request")
+      console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+  console.log(error);
+  });
+//console.log(records)
+//console.log("working get request")
+
+res.json(result).status(200);
+});
+
 // This section will help you get a single record by id
 router.get("/:id", async (req, res) => {
   let collection = await db.collection("records");

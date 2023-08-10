@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/record", records);
-app.use("/subscribers", subscribers)
+//app.use("/subscribers", subscribers)
 
 // start the Express server
 app.listen(PORT, () => {
