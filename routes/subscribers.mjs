@@ -12,7 +12,7 @@ let config = {
     }
   };
 
-
+var result;
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -20,8 +20,9 @@ router.get("/", async (req, res) => {
    
             let response = await axios.request(config)
             .then((response) => {
-                const result = (JSON.stringify(response.data))
-            console.log(JSON.stringify(response.data));
+                result = (JSON.stringify(response.data))
+                console.log("Successful GET request")
+                console.log(JSON.stringify(response.data));
             })
             .catch((error) => {
             console.log(error);
