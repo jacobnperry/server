@@ -1,16 +1,20 @@
 import express from "express";
 import db from "../db/conn.mjs";
 import { ObjectId } from "mongodb";
+import axios from "axios";
 
 const router = express.Router();
 
 
-
-
-
-
-
-
+let config = {
+  method: 'get',
+  maxBodyLength: Infinity,
+  url: 'https://api.getdrip.com/v2/9967522/subscribers/',
+  headers: { 
+    'Authorization': 'Basic MDY3MmRjNTIyZDNiNjgyN2U0MDY1YzI4NjZiNTkwMjI6',
+    'Content-Type': 'application/json'
+  }
+};
 
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
@@ -20,21 +24,19 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/subscribers", async (req, res) => {
-
-   
-  let response = await axios.request(config)
+  var result = [];
+  await axios.request(config)
   .then((response) => {
-      result = (JSON.stringify(response.data))
-      console.log("Successful GET request")
-      console.log(JSON.stringify(response.data));
+      result = response.data
+      res.send(result);
   })
   .catch((error) => {
   console.log(error);
   });
 //console.log(records)
 //console.log("working get request")
+console.log(result)
 
-res.json(result).status(200);
 });
 
 // This section will help you get a single record by id

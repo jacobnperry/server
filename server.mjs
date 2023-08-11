@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import "./loadEnvironment.mjs";
 import records from "./routes/record.mjs";
-import subscribers from "./routes/subscribers.mjs";
+//import subscribers from "./routes/subscribers.mjs";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
