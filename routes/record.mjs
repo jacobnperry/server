@@ -5,16 +5,10 @@ import axios from "axios";
 
 const router = express.Router();
 
+var subs = []
 
-let config = {
-  method: 'get',
-  maxBodyLength: Infinity,
-  url: 'https://api.getdrip.com/v2/9967522/subscribers/',
-  headers: { 
-    'Authorization': 'Basic MDY3MmRjNTIyZDNiNjgyN2U0MDY1YzI4NjZiNTkwMjI6',
-    'Content-Type': 'application/json'
-  }
-};
+
+
 
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
@@ -24,19 +18,44 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/subscribers", async (req, res) => {
+  let page = 1
+  let config = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: 'https://api.getdrip.com/v2/9967522/subscribers/?page=' + page,
+    headers: { 
+      'Authorization': 'Basic MDY3MmRjNTIyZDNiNjgyN2U0MDY1YzI4NjZiNTkwMjI6',
+      'Content-Type': 'application/json'
+    }
+  };
+  var pageCount = 0
   var result = [];
-  await axios.request(config)
-  .then((response) => {
-      result = response.data
-      res.send(result);
-  })
-  .catch((error) => {
-  console.log(error);
-  });
-//console.log(records)
-//console.log("working get request")
-console.log(result)
+  var returnResult = []
 
+
+  async function getSubs(){
+    await axios.request(config)
+    .then((response) => {
+      result = JSON.stringify(response.data.subscribers)  
+      pageCount = response.data.meta.total_pages
+      
+      returnResult.push(JSON.parse(result))
+      console.log(returnResult)
+      
+
+
+    })
+    .catch((error) => {
+    console.log(error);
+    });
+  }
+
+  if (page <= pageCount || page == 1){
+    getSubs()
+    page = page + 1
+  } else {
+    res.send(returnResult);
+  }
 });
 
 // This section will help you get a single record by id
