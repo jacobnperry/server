@@ -2,109 +2,85 @@ import express from "express";
 import db from "../db/conn.mjs";
 import { ObjectId } from "mongodb";
 import axios from "axios";
+import { Routes, Route, useParams } from 'react-router-dom';
 
 const router = express.Router();
 
 var subs = []
 
-
-
-
-// This section will help you get a list of all the records.
-router.get("/", async (req, res) => {
-  let collection = await db.collection("records");
-  let results = await collection.find({}).toArray();
-  res.send(results).status(200);
-});
+let page = 1
+var pageCount = 0
+var result = [];
+var returnResult = []
 
 router.get("/subscribers", async (req, res) => {
-  let page = 1
   let config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.getdrip.com/v2/9967522/subscribers/?page=' + page,
+    url: 'https://api.getdrip.com/v2/9967522/',
     headers: { 
       'Authorization': 'Basic MDY3MmRjNTIyZDNiNjgyN2U0MDY1YzI4NjZiNTkwMjI6',
       'Content-Type': 'application/json'
     }
   };
-  var pageCount = 0
-  var result = [];
-  var returnResult = []
 
-
-  async function getSubs(){
-    await axios.request(config)
+  
+    config.url = config.url + "/subscribers"
+    result = await axios.request(config)
     .then((response) => {
+      
       result = JSON.stringify(response.data.subscribers)  
       pageCount = response.data.meta.total_pages
       
       returnResult.push(JSON.parse(result))
       console.log(returnResult)
-      
+      res.send(returnResult);
 
 
     })
     .catch((error) => {
     console.log(error);
     });
-  }
+  
+});
 
-  if (page <= pageCount || page == 1){
-    getSubs()
-    page = page + 1
-  } else {
+router.get("/subscribers/:sub", async (req, res) => {
+  let config = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: 'https://api.getdrip.com/v2/9967522/',
+    headers: { 
+      'Authorization': 'Basic MDY3MmRjNTIyZDNiNjgyN2U0MDY1YzI4NjZiNTkwMjI6',
+      'Content-Type': 'application/json'
+    }
+  };
+  let subID = req.params
+  console.log(subID)
+  config.url = config.url + '/subscribers/' + subID.sub
+  result = await axios.request(config)
+  .then((response) => {
+    
+    result = JSON.stringify(response.data.subscribers)  
+   
+    
+    returnResult.push(JSON.parse(result))
+    console.log(returnResult)
     res.send(returnResult);
-  }
+
+
+  })
+  .catch((error) => {
+  console.log(error);
+  });
+
 });
 
 // This section will help you get a single record by id
-router.get("/:id", async (req, res) => {
-  let collection = await db.collection("records");
-  let query = {_id: new ObjectId(req.params.id)};
-  let result = await collection.findOne(query);
 
-  if (!result) res.send("Not found").status(404);
-  else res.send(result).status(200);
-});
 
-// This section will help you create a new record.
-router.post("/", async (req, res) => {
-  let newDocument = {
-    name: req.body.name,
-    position: req.body.position,
-    level: req.body.level,
-  };
-  let collection = await db.collection("records");
-  let result = await collection.insertOne(newDocument);
-  res.send(result).status(204);
-});
 
 // This section will help you update a record by id.
-router.patch("/:id", async (req, res) => {
-  const query = { _id: new ObjectId(req.params.id) };
-  const updates =  {
-    $set: {
-      name: req.body.name,
-      position: req.body.position,
-      level: req.body.level
-    }
-  };
-
-  let collection = await db.collection("records");
-  let result = await collection.updateOne(query, updates);
-
-  res.send(result).status(200);
-});
 
 // This section will help you delete a record
-router.delete("/:id", async (req, res) => {
-  const query = { _id: new ObjectId(req.params.id) };
-
-  const collection = db.collection("records");
-  let result = await collection.deleteOne(query);
-
-  res.send(result).status(200);
-});
 
 export default router;
